@@ -13,7 +13,10 @@ import { ThemeProvider } from "@mui/material";
 import MuiCssBaseline from '@mui/material/CssBaseline'
 import theme from './styles/theme';
 
-// TODO: store
+// store
+import { Provider } from 'react-redux'
+import { store, persistor } from './store/index'
+import { PersistGate } from 'redux-persist/integration/react'
 
 // pages
 import Loan from './components/pages/application/new'
@@ -25,6 +28,8 @@ const rootElement = document.getElementById("root");
 createRoot(rootElement!).render(
   <React.StrictMode>
     <MuiCssBaseline>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider theme={theme}>
             <HashRouter>
               <Routes>
@@ -35,6 +40,8 @@ createRoot(rootElement!).render(
               </Routes>
             </HashRouter>
           </ThemeProvider>
+          </PersistGate>
+          </Provider>
     </MuiCssBaseline>
   </React.StrictMode>
 );

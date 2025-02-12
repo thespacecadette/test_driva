@@ -1,6 +1,9 @@
 // components
+import { useEffect } from 'react';
 import { Card, Typography } from '@mui/material';
 import { Logo } from '../../ui/logo';
+import { Button } from '../../ui/button';
+import service from '../../../services/service';
 
 /*
 TODO: form
@@ -28,23 +31,46 @@ TODO: RESULTS PAGE --> lenders
 TODO: Lenders API endpoint
 */
 export default function NewLoan() {
+  // load initial state
+  useEffect(() => {
+  }, []);
+
   return (<div style={{
     height: '100%',
     textAlign: 'center',
     width: '100%',
   }}>
-    <Logo 
-      title="Driva" 
-      width={200}  
-    />
     <Card style={{
       margin: '0 auto',
       width: '50%'
     }}>
-      <Typography variant="subtitle1" style={{
+      <Typography variant="h2" style={{
         display: 'flex',
         textAlign: 'left'
       }}>New Loan</Typography>
+
+      {/* TODO: form */}
+
+      <Button 
+        color="primary"
+        disabled={true}
+        text="Apply"
+        wide={true}
+        onCallback={() => {
+          service.get(
+            `${process.env.API_DOMAIN}/lenders/get`,
+          ).then((payload): void => {
+            console.log('lender data! ', payload)
+            // TODO: update state
+            // TODO: send to store
+            // TODO: display results
+          }).catch(error => {
+            // TODO: logging
+            throw new Error(error);
+          });
+      
+        }}
+      />
     </Card>
   </div>);
 }
