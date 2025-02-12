@@ -77,7 +77,7 @@ const config: Configuration = {
 			}],
 		}),
 		new HtmlWebpackPlugin({
-			title: `Driva ${process.env.NODE_ENV}`,
+			title: `Driva | ${process.env.NODE_ENV} env`,
 			// Load a custom template (lodash by default)
 			template: path.resolve(__dirname, 'src/index.html'),
 		}),

@@ -480,6 +480,7 @@ const theme: ThemeOptions = createTheme({
 				},
 				root: {
 					border: '0px none transparent !important',
+					display: 'block',
 					// '& $notchedOutline': {
 					// 	borderColor: FORM_BORDER_COLOR,
 					// },
