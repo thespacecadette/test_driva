@@ -15,7 +15,11 @@ type ButtonProps = baseProps & {
    * Label
    */
   text: string;
-    /**
+  /**
+   * Type
+   */
+   type: string;
+  /**
    * MUI Color - palette
    */
   color?: 'primary' | 'secondary' | 'error' | 'warning' | 'info';
@@ -34,7 +38,7 @@ type ButtonProps = baseProps & {
  * Primary UI component for user interaction
  */
 export const Button = (props: ButtonProps) => {
-  const { color, disabled, endIcon, onCallback, startIcon, style,wide, variant, text } = props;
+  const { color, disabled, endIcon, onCallback, startIcon, style,wide, variant, text, type } = props;
 
   return (
     <MUIButton 
@@ -52,6 +56,7 @@ export const Button = (props: ButtonProps) => {
         margin: `0 0 ${SPACING_COMPONENT}px 0`,
         ...style,
       }}
+      type={type}
       variant={variant ? variant : 'contained'} 
     >
       {text}

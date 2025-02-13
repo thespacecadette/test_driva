@@ -1,13 +1,16 @@
 // components
 import { useEffect, useState } from 'react';
 import { Card, Grid, Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import { Controller, useForm, SubmitHandler, FieldValues } from 'react-hook-form';
+import { ErrorMessage } from "@hookform/error-message"
 import { TextInput } from '../../ui/TextInput';
 import { Select } from '../../ui/Select';
 import { Button } from '../../ui/button';
 import service from '../../../services/service';
 import { SPACING_LAYOUT } from '../../../styles/theme';
+import { modalStyle } from './styles';
 
 const loanPurposeOptions = [
   {
@@ -23,85 +26,116 @@ const loanPurposeOptions = [
     value: 'other',
   },
 ];
-
 const loanTermOptions = [
   {
-    value: 1,
+    value: '1',
     label: 1,
   },
   {
-    value: 2,
+    value: '2',
     label: 2,
   },
   {
-    value: 3,
+    value: '3',
     label: 3,
   },
   {
-    value: 4,
+    value: '4',
     label: 4,
   },
   {
-    value: 5,
+    value: '5',
     label: 5,
   },
   {
-    value: 6,
+    value: '6',
     label: 6,
   },
   {
-    value: 7,
+    value: '7',
     label: 7,
   },
 ];
-
 const employmentStatusOptions = [
   {
-    value: 'Employed',
+    value: 'employed',
     label: 'Employed',
   },
   {
-    value: ' Self-Employed',
+    value: ' selfEmployed',
     label: ' Self-Employed',
   },
   {
-    value: 'Unemployed',
+    value: 'unemployed',
     label: 'Unemployed',
   },
 ];
 
-
 /*
 TODO: form
 __ Personal Details step:
-Fields:
-First name
-Last name
-Email
-Employment Status (Employed, Self-Employed, Unemployed)
-Employer Name (visible if employed)
-Validation:
-Required: rst name, last name, email, employment status, employer name (if employed)
 __ Loan Details step:
-Fields:
-Vehicle price (min $2000, choose a maximum)
-Deposit (min $0, should not exceed vehicle price)
-Loan Purpose (Vehicle, Home Improvement, etc.)
-Loan Term (1-7 years)
-
 TODO: VALIDATION
 all fields required
 vehicle price - deposit > $2000
-
 TODO: RESULTS PAGE --> lenders
-TODO: Lenders API endpoint
 */
 export default function NewLoan() {
   // states
-  const [isInvalidForm, setIsInvalidForm] = useState<boolean>(false)
+  const [open, setOpen] = useState(false);
+  const handleClose = () => setOpen(false);
+  const [values, setValues] = useState({
+    firstName: 'test',
+    lastName: 'test',
+    email: '',
+    employmentStatus: employmentStatusOptions[0].value,
+    employerName: 'test',
+    vehiclePrice: '123123',
+    deposit: '1234',
+    loanPurpose: loanPurposeOptions[0].value,
+    loanTermYears: loanTermOptions[0].value,
+  });
+  const [isFormValid, setFormValidation] = useState<boolean>(false);
+  // form
+  const {
+    getValues,
+    handleSubmit,
+    formState: { errors, isValid },
+    register,
+    setValue,
+  } = useForm({
+    defaultValues: values,
+  });
 
+  // validation
   useEffect(() => {
-  }, []);
+    const isVehiclePriceMinusDepositMoreThan2K = parseFloat(values.vehiclePrice) - parseFloat(values.deposit) > 2000;
+
+    if (isValid) {
+      // const isVehiclePriceMinusDepositLessThan2K = parseFloat(values.vehiclePrice) - parseFloat(values.deposit) > 2000;
+
+      if (isVehiclePriceMinusDepositMoreThan2K) {
+        setOpen(false);
+        setFormValidation(true);
+      } else {
+        setOpen(true);
+        setFormValidation(false);
+      }
+    }
+  }, [values, isValid]);
+
+  // form functions
+  const showErrorMessage = (errors: any, field: string) => errors && errors[field] && errors[field].message ? errors[field].message : '';
+  const saveFormValue = (field: never, value: never) => {
+    setValue(field as never, value as never, { shouldValidate: true })
+    setValues({
+      ...values, 
+      [field]: value,
+    })
+  };
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    console.log(data);
+  };
 
   return (<div style={{
     height: '100%',
@@ -110,138 +144,173 @@ export default function NewLoan() {
     backgroundColor: '#f1f1f1',
     padding: `${SPACING_LAYOUT}px`
   }}>
+    <Modal
+        open={open}
+        onClose={handleClose}
+      >
+        <Box sx={{ ...modalStyle, width: 500 }}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Vehicle Minimum Deposit required
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Your vehicle price - deposit must be more than $2000.
+          </Typography>
+        </Box>
+      </Modal>
     <Card style={{
       margin: '0 auto',
       width: '80%'
     }}>
-      <Typography variant="h2" style={{
+      <Typography variant="h3" style={{
         display: 'flex',
         textAlign: 'left'
-      }}>New Loan</Typography>
-      <Grid container spacing={4}>
-        <Grid item xs={6}>
-          <TextInput
-            error={isInvalidForm}
-            label="First Name"
-            value={''}
-            isInline={false}
-            onCallback={(value) => {
-              // TODO: test
-            }}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <TextInput
-            error={isInvalidForm}
-            label="Last Name"
-            value={''}
-            isInline={false}
-            onCallback={(value) => {
-              // TODO: test
-            }}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextInput
-            error={isInvalidForm}
-            label="Email"
-            value={''}
-            isInline={false}
-            onCallback={(value) => {
-              // TODO: test
-            }}
-          />
-        </Grid>
-        <Grid item xs={4}>
+      }}>Personal Details</Typography>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={4}>
+          <Grid item xs={6}>
+            <TextInput
+              error={!!errors['firstName']}
+              errorText={showErrorMessage(errors, 'firstName')}
+              label="First Name"
+              value={values.firstName}
+              isInline={false}
+              onCallback={(value) => {
+                saveFormValue('firstName' as never, value as never)
+              }}
+              {...register('firstName' as never, { required: 'This is a required field. ' })}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextInput
+              error={!!errors['lastName']}
+              errorText={showErrorMessage(errors, 'lastName')}
+              label="Last Name"
+              value={values.lastName}
+              isInline={false}
+              onCallback={(value) => {
+                saveFormValue('lastName' as never, value as never)
+              }}
+              {...register('lastName' as never, { required: 'This is a required field. ' })}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextInput
+              error={!!errors['email']}
+              errorText={showErrorMessage(errors, 'email')}
+              label="Email"
+              value={values.email}
+              isInline={false}
+              onCallback={(value) => {
+                saveFormValue('email' as never, value as never)
+              }}
+              {...register('email', { required: 'This is a required field. ', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Please enter a valid email address'} })}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Select
+              label="Employment Status"
+              options={employmentStatusOptions}
+              value={values.employmentStatus}
+              onCallback={(value) => {
+                saveFormValue('employmentStatus' as never, value as never)
+              }}
+              {...register('employmentStatus' as never, { required: 'This is a required field. ' })}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextInput
+              error={!!errors['employerName']}
+              errorText={showErrorMessage(errors, 'employerName')}
+              label="Employer Name"
+              value={values.employerName}
+              isInline={false}
+              onCallback={(value) => {
+                saveFormValue('employerName' as never, value as never)
+              }}
+              {...register('employerName' as never, { required: 'This is a required field. ' })}
+            />
+          </Grid>
+        </Grid>      
+        <Typography variant="h2" style={{
+          display: 'flex',
+          textAlign: 'left'
+        }}>Loan Details</Typography>
+        <Grid container spacing={4}>
+          <Grid item xs={6}>
+            <TextInput
+              error={!!errors['vehiclePrice']}
+              errorText={showErrorMessage(errors, 'vehiclePrice')}
+              label="Vehicle price"
+              value={values.vehiclePrice}
+              isInline={false}
+              onCallback={(value) => {
+                saveFormValue('vehiclePrice' as never, value as never)
+              }}
+              {...register('vehiclePrice' as never, { required: 'This is a required field. ' })}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextInput
+              error={!!errors['vehiclePrice']}
+              errorText={showErrorMessage(errors, 'vehiclePrice')}
+              label="Deposit"
+              value={values.deposit}
+              isInline={false}
+              onCallback={(value) => {
+                saveFormValue('deposit' as never, value as never)
+              }}
+              {...register('deposit' as never, { required: 'This is a required field. ' })}
+            />
+          </Grid>
+          <Grid item xs={4}>
           <Select
-            label="Employment Status"
-            options={employmentStatusOptions}
-            value={''}
-            onCallback={() => {
-              // TODO: loan purpose
-            }}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextInput
-            error={isInvalidForm}
-            label="Employer Name"
-            value={''}
-            isInline={false}
+            error={!!errors['loanPurpose']}
+            errorText={showErrorMessage(errors, 'loanPurpose')}
+            label="Loan purpose"
+            options={loanPurposeOptions}
+            value={values.loanPurpose}
             onCallback={(value) => {
-              // TODO: test
+              saveFormValue('loanPurpose' as never, value as never)
             }}
+            {...register('loanPurpose' as never, { required: 'This is a required field. ' })}
           />
-        </Grid>
-      </Grid>      
-      <Typography variant="h2" style={{
-        display: 'flex',
-        textAlign: 'left'
-      }}>Loan Details</Typography>
-      <Grid container spacing={4}>
-        <Grid item xs={6}>
-          <TextInput
-            error={isInvalidForm}
-            label="Vehicle price"
-            value={''}
-            isInline={false}
+          </Grid>
+          <Grid item xs={2}>
+          <Select
+            error={!!errors['loanTermYears']}
+            errorText={showErrorMessage(errors, 'loanTermYears')}
+            label="Loan Term"
+            options={loanTermOptions}
+            value={values.loanTermYears}
             onCallback={(value) => {
-              // TODO: test
+              saveFormValue('loanTermYears' as never, value as never)
             }}
+            {...register('loanTermYears' as never, { required: 'This is a required field. ' })}
           />
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <TextInput
-            error={isInvalidForm}
-            label="Deposit"
-            value={''}
-            isInline={false}
-            onCallback={(value) => {
-              // TODO: test
-            }}
-          />
-        </Grid>
-        <Grid item xs={4}>
-        <Select
-          label="Loan purpose"
-          options={loanPurposeOptions}
-          value={''}
+        <Button
+          color="primary"
+          disabled={!isFormValid}
+          type="submit"
+          text="Apply"
+          wide={true}
           onCallback={() => {
-            // TODO: loan purpose
+            console.log(getValues());
+            // service.get(
+            //   `${process.env.API_DOMAIN}/lenders/get`,
+            // ).then((payload): void => {
+            //   console.log('lender data! ', payload)
+            //   // TODO: update state
+            //   // TODO: send to store
+            //   // TODO: display results
+            // }).catch(error => {
+            //   // TODO: logging
+            //   throw new Error(error);
+            // });
           }}
         />
-        </Grid>
-        <Grid item xs={3}>
-        <Select
-          label="Loan Term"
-          options={loanTermOptions}
-          value={''}
-          onCallback={() => {
-            // TODO: loan purpose
-          }}
-        />
-        </Grid>
-      </Grid>      
-      <Button 
-        color="primary"
-        disabled={true}
-        text="Apply"
-        wide={true}
-        onCallback={() => {
-          service.get(
-            `${process.env.API_DOMAIN}/lenders/get`,
-          ).then((payload): void => {
-            console.log('lender data! ', payload)
-            // TODO: update state
-            // TODO: send to store
-            // TODO: display results
-          }).catch(error => {
-            // TODO: logging
-            throw new Error(error);
-          });
-      
-        }}
-      />
+      </form>
     </Card>
   </div>);
 }

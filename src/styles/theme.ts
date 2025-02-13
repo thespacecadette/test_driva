@@ -523,7 +523,7 @@ const theme: ThemeOptions = createTheme({
 					color: COLOR_BLACK,
 					minWidth: '80px',
 					height: `${INPUT_HEIGHT}px`,
-					lineHeight: `${INPUT_HEIGHT}px`,
+					lineHeight: `${SPACING_BLOCK}px`,
 
 					'& .MuiSvgIcon-root': {
 						marginRight: `${SPACING_ELEMENT}px`,

@@ -1,5 +1,6 @@
 import React from 'react';
 import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import { COLOR_GREY, SPACING, SPACING_COMPONENT } from './../../styles/theme';
 
@@ -10,6 +11,7 @@ interface props {
   isInline?: boolean;
   isPassword?: boolean;
   label: string;
+  name: string;
   onCallback: (t:string) => any;
   placeholder?: string;
   required?: boolean;
@@ -18,7 +20,7 @@ interface props {
   options: Array<any>;
 }
 
-export const Select: React.FC<props> = ({ disabled, error, errorText, isInline, options, label, onCallback, placeholder, required, tooltip, value }) => 
+export const Select: React.FC<props> = ({ disabled, error, errorText, isInline, options, label, name, onCallback, placeholder, required, tooltip, value }) => 
    {
     const t = <>
       <p style={{
@@ -28,10 +30,10 @@ export const Select: React.FC<props> = ({ disabled, error, errorText, isInline, 
         select
         error={error}
         helperText={error && errorText}
-        id="outlined-required"
+        id={name}
+        name={name}
         onChange={(e) => {
           const v = e.target.value
-
           onCallback(v); // pass back to parent component
         }}
         disabled={disabled}
@@ -52,9 +54,9 @@ export const Select: React.FC<props> = ({ disabled, error, errorText, isInline, 
         variant="outlined"
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <MenuItem key={option.value} value={option.value}>
             {option.label}
-          </option>
+          </MenuItem>
         ))}
       </TextField>
     </>;

@@ -11,13 +11,14 @@ interface props {
   isPassword?: boolean;
   label: string;
   onCallback: (t:string) => any;
+  name: string;
   placeholder?: string;
   required?: boolean;
   tooltip?: string;
   value: string;
 }
 
-export const TextInput: React.FC<props> = ({ disabled, error, errorText, isInline, isPassword, label, onCallback, placeholder, required, tooltip, value }) => 
+export const TextInput: React.FC<props> = ({ disabled, error, errorText, isInline, isPassword, label, name, onCallback, placeholder, required, tooltip, value }) => 
    {
     const t = <>
       <p style={{
@@ -25,8 +26,9 @@ export const TextInput: React.FC<props> = ({ disabled, error, errorText, isInlin
       }}>{label}</p>
       <TextField
         error={error}
+        name={name}
         helperText={error && errorText}
-        id="outlined-required"
+        id={name}
         onChange={(e) => {
           const v = e.target.value
 
