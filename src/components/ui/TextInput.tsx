@@ -11,6 +11,7 @@ interface props {
   isPassword?: boolean;
   label: string;
   onCallback: (t:string) => any;
+  onBlurCallback?: (t:any) => any;
   name: string;
   placeholder?: string;
   required?: boolean;
@@ -18,7 +19,7 @@ interface props {
   value: string;
 }
 
-export const TextInput: React.FC<props> = ({ disabled, error, errorText, isInline, isPassword, label, name, onCallback, placeholder, required, tooltip, value }) => 
+export const TextInput: React.FC<props> = ({ disabled, error, errorText, isInline, isPassword, label, name, onBlurCallback, onCallback, placeholder, required, tooltip, value }) => 
    {
     const t = <>
       <p style={{
@@ -33,6 +34,13 @@ export const TextInput: React.FC<props> = ({ disabled, error, errorText, isInlin
           const v = e.target.value
 
           onCallback(v); // pass back to parent component
+        }}
+        inputProps={{
+          onBlur: (e) => {
+            if (!!onBlurCallback) {
+              onBlurCallback(e.target.value);
+            }
+          },
         }}
         disabled={disabled}
         placeholder={placeholder}

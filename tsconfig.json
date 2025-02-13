@@ -10,5 +10,5 @@
     "outDir": "dist",
     "moduleResolution": "node"
   },
-  "include": ["**/*.ts", "**/*.tsx", "mock_api_service/index.js"]
+  "include": ["**/*.ts", "**/*.tsx", "mock_api_service/index.js", "src/components/pages/application/form.test.js"]
 }

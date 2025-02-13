@@ -5,9 +5,10 @@ export const userSlice = createSlice({
 	name: 'lenders',
 	initialState,
 	reducers: {
-		getLenders: (state, action) => {
+		setLenders: (state, action) => {
+			console.log('state action', action.payload)
 			state = {
-				lenders: action.payload.lenders,
+				lenders: action.payload,
 			};
 
 			return state;
@@ -16,6 +17,6 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { getLenders } = userSlice.actions;
+export const { setLenders } = userSlice.actions;
 
 export default userSlice.reducer;

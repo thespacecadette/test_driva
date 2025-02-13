@@ -16,4 +16,7 @@ export const modalStyle = {
     padding: `${SPACING_BLOCK}px !important`
   };
   
-  
+  export const subHeadingStyle = {
+    marginTop: '24px',
+    width: '100%',
+  };

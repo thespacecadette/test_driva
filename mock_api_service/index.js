@@ -13,8 +13,11 @@ var MOCK_LENDER_DATA = require('./mock_data');
 // TODO : add to env file
 const API_ENDPOINT_PORT = 9000;
 
+// TODO: Security (??)
+// TODO: simple tests
 app.use(cors(corsOptions))
 app.get('/lenders/get', (req, res, next) => {
+  // TODO: Calculate lender repayment based on customer loan amount input and the lender rate.
     res.json({
         status: 200,
         data: MOCK_LENDER_DATA,

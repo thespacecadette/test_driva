@@ -19,7 +19,7 @@ import { store, persistor } from './store/index'
 import { PersistGate } from 'redux-persist/integration/react'
 
 // pages
-import Loan from './components/pages/application/new'
+import Loan from './components/pages/application/form'
 
 // New as of React18
 const rootElement = document.getElementById("root");
